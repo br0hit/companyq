@@ -1,0 +1,6 @@
+fastapi[standard]
+sqlmodel
+sqlalchemy 
+psycopg2
+pandas
+uvicorn
