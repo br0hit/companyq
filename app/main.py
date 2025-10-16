@@ -4,51 +4,65 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import Company, CompanyQuestion, Question, Topic
 from sqlalchemy import func, case, desc
+from fastapi.middleware.cors import CORSMiddleware
+from collections import defaultdict
 
 app = FastAPI()
 
+# Allow only your frontend domains
+origins = [
+    "http://127.0.0.1:5500",       # if using Live Server
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,          # allowed frontend URLs
+    allow_credentials=True,
+    allow_methods=["*"],            # GET, POST, etc.
+    allow_headers=["*"],            # Authorization, Content-Type, etc.
+)
+
 @app.get("/company-questions/")
-def get_company_questions(company_name: str, time_period: str, db: Session = Depends(get_db)):
+def get_company_questions(company_name: str, db: Session = Depends(get_db)):
     # Step 1: Get company by name
     company = db.query(Company).filter(Company.name == company_name).first()
     if not company:
         raise HTTPException(status_code=404, detail="Company not found")
 
-    # Step 2: Get all CompanyQuestion entries for this company and time period
+    # Step 2: Get all questions for this company (all time periods)
     company_questions = (
         db.query(CompanyQuestion)
-        .filter(
-            CompanyQuestion.company_id == company.id,
-            CompanyQuestion.time_period == time_period
-        )
+        .filter(CompanyQuestion.company_id == company.id)
         .all()
     )
 
     if not company_questions:
-        raise HTTPException(status_code=404, detail="No questions found for this time period")
+        raise HTTPException(status_code=404, detail="No questions found for this company")
 
-    # Step 3: Build the response with full question + topic details
-    result = []
+    # Step 3: Group questions by time period
+    result = defaultdict(list)
     for cq in company_questions:
-        question = cq.question
-        result.append({
-            "question_id": question.id,
-            "title": question.title,
-            "difficulty": question.difficulty,
-            "acceptance_rate": question.acceptance_rate,
-            "link": question.link,
-            "topics": [topic.name for topic in question.topics],
-            "time_period": cq.time_period,
+        q = cq.question
+        result[cq.time_period].append({
+            "question_id": q.id,
+            "title": q.title,
+            "difficulty": q.difficulty,
+            "acceptance_rate": q.acceptance_rate,
+            "link": q.link,
+            "topics": [topic.name for topic in q.topics],
             "frequency": cq.frequency,
         })
 
-    return {"company": company_name, "time_period": time_period, "questions": result}
-
+    # Step 4: Build the final response
+    return {
+        "company": company_name,
+        "time_periods": result
+    }
 
 @app.get("/companies/")
 def get_companies_sorted(db: Session = Depends(get_db)):
     # Define fixed time period
-    time_period = "1. Thirty Days"
+    time_period = "5. All"
 
     # Query to get companies sorted by number of questions for this period
     company_counts = (
