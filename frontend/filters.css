@@ -1,0 +1,459 @@
+/* ===== FILTER CONTROLS ===== */
+.filter-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding: 1rem;
+    background-color: var(--sidebar-bg); /* Use sidebar color for contrast */
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 180px;
+    flex-grow: 1;
+}
+
+.filter-group label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.filter-group select,
+.filter-group input[type="checkbox"] {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+}
+
+.filter-group select {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.6rem;
+    color: var(--text-color);
+    width: 100%;
+}
+
+.filter-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-hover-bg);
+}
+
+.filter-group select[multiple] {
+    height: 100px; /* Give multi-select some height */
+    padding: 0.5rem;
+}
+
+.checkbox-group {
+    flex-direction: row;
+    align-items: center;
+    align-self: flex-end; /* Align to the bottom of the flex container */
+    min-width: fit-content;
+    padding-bottom: 0.6rem; /* Align with select padding */
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin-right: 0.5rem;
+    accent-color: var(--primary-color);
+}
+
+
+/* ===== QUESTION TABLE STYLES ===== */
+.question-list table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.question-list th {
+    text-align: left;
+    color: var(--text-muted);
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid var(--border-color);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+}
+
+.question-list td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.question-list tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.question-list tbody tr:hover {
+    background-color: var(--primary-hover-bg);
+}
+
+/* Column specific widths */
+.col-solved { width: 5%; text-align: center;}
+.col-flag { width: 4%; }
+.col-title { width: 25%; }
+.col-difficulty { width: 12%; }
+.col-acceptance { width: 12%; }
+.col-frequency { width: 12%; }
+.col-topics { width: 30%; }
+
+/* Individual cell styling */
+.flag-icon {
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: color 0.2s, transform 0.2s;
+    font-variation-settings: 'FILL' 0; /* Unfilled icon */
+}
+
+.flag-icon:hover {
+    transform: scale(1.2);
+}
+
+.flag-icon.flagged {
+    color: #facc15; /* A nice gold/yellow color */
+    font-variation-settings: 'FILL' 1; /* Filled icon */
+}
+
+.question-title a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.question-title a:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+.difficulty-tag {
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+.difficulty-EASY {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+}
+.difficulty-MEDIUM {
+    background-color: rgba(234, 179, 8, 0.1);
+    color: #eab308;
+}
+.difficulty-HARD {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.topic-tag {
+    display: inline-block;
+    background-color: var(--cell-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin: 2px;
+}
+
+/* (Keep all your existing CSS above this line) */
+
+
+/* ===== PAGINATION STYLES (New Addition) ===== */
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 1rem;
+    margin-top: 1rem;
+    color: var(--text-muted);
+}
+
+.page-size-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.page-size-selector select {
+    background-color: var(--cell-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.25rem 0.5rem;
+    color: var(--text-color);
+}
+
+.page-navigation {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.page-navigation button {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    border-radius: 6px;
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.page-navigation button:hover:not(:disabled) {
+    background-color: var(--primary-hover-bg);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.page-navigation button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-navigation button.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--sidebar-bg);
+    font-weight: 600;
+}
+
+.col-solved { width: 5%; text-align: center;}
+.col-flag { width: 4%; }
+.col-title { width: 25%; }
+.col-difficulty { width: 12%; }
+.col-acceptance { width: 12%; }
+.col-frequency { width: 12%; }
+.col-topics { width: 30%; }
+
+/* ===== TOPIC MULTISELECT DROPDOWN ===== */
+.custom-multiselect {
+    position: relative;
+    width: 100%;
+}
+
+.select-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.6rem;
+    cursor: pointer;
+    color: var(--text-color);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.select-box.open,
+.select-box:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-hover-bg);
+}
+
+.topics-dropdown {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 100%;
+    max-height: 220px;
+    overflow-y: auto;
+    background-color: var(--sidebar-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.5rem;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    display: none;
+    z-index: 10;
+}
+
+.topics-dropdown.visible {
+    display: block;
+}
+
+.topics-dropdown label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.5rem;
+    cursor: pointer;
+    color: var(--text-color);
+    border-radius: 4px;
+}
+
+.topics-dropdown label:hover {
+    background-color: var(--primary-hover-bg);
+}
+
+.topics-dropdown input[type="checkbox"] {
+    accent-color: var(--primary-color);
+}
+
+.solved-icon.solved {
+    color: #22c55e; /* green */
+    font-variation-settings: 'FILL' 1;
+}
+
+/* ===== SORT ICONS ===== */
+.sort-icons {
+  display: inline-flex;
+  flex-direction: column;
+  vertical-align: middle;
+  margin-left: 0.3rem;
+}
+
+.sort-icons .material-symbols-outlined {
+  font-size: 1rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  line-height: 0.8;
+  transition: color 0.2s ease;
+}
+
+.sort-icons .material-symbols-outlined:hover {
+  color: var(--primary-color);
+}
+
+.sort-icons .active {
+  color: var(--primary-color);
+}
+
+/* ===== TABLE HEADER SORT ICONS (SIDE-BY-SIDE) ===== */
+.sort-icons-horizontal {
+  display: inline-flex;
+  gap: 0.2rem;
+  align-items: center;
+  margin-left: 0.4rem;
+  vertical-align: middle;
+}
+
+.sort-icons-horizontal .material-symbols-outlined {
+  font-size: 1.15rem;      /* bigger and clearer */
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: color 0.2s ease, transform 0.15s ease;
+}
+
+.sort-icons-horizontal .material-symbols-outlined:hover {
+  color: var(--primary-color);
+  transform: scale(1.15);
+}
+
+.sort-icons-horizontal .active {
+  color: var(--primary-color);
+}
+
+/* ===== HEADER CHECKBOX FILTERS (SOLVED / FLAGGED) ===== */
+.checkbox-header {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.checkbox-header input[type="checkbox"] {
+  accent-color: var(--primary-color);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* ===== NOTE ICON STYLING ===== */
+.edit-comment-icon {
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: color 0.2s, transform 0.2s;
+    font-size: 1.1rem;
+    vertical-align: middle;
+    margin-left: 0.5rem;
+}
+
+.edit-comment-icon:hover {
+    color: var(--primary-color);
+    transform: scale(1.2);
+}
+
+/* ===== COMMENT MODAL STYLES ===== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: var(--sidebar-bg);
+    padding: 2rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.modal-question-title {
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-top: -1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+.modal-content textarea {
+    width: 100%;
+    min-height: 120px;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.75rem;
+    color: var(--text-color);
+    font-family: 'Inter', sans-serif;
+    resize: vertical;
+    margin-bottom: 1rem;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.modal-actions button {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.button-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.button-secondary {
+    background-color: var(--cell-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}

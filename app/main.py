@@ -64,7 +64,7 @@ def get_companies_sorted(db: Session = Depends(get_db)):
     # Define fixed time period
     time_period = "5. All"
 
-    # Query to get companies sorted by number of questions for this period
+    # Query to get companies sorted by number of questions for this   period
     company_counts = (
         db.query(
             Company.id,

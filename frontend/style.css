@@ -1,0 +1,337 @@
+/* ===== GLOBAL STYLES & VARIABLES ===== */
+:root {
+    /* Light Mode Colors */
+    --bg-color: #f8f9fa;
+    --sidebar-bg: #ffffff;
+    --main-bg: #ffffff;
+    --text-color: #212529;
+    --text-muted: #6c757d;
+    --border-color: #dee2e6;
+    --primary-color: #007bff;
+    --primary-hover-bg: #e7f5ff;
+    --cell-bg: #ffffff;
+    --cell-hover-border: #007bff;
+    --shadow-color: rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode {
+    /* Dark Mode Colors (Programmer/IDE Theme) */
+    --bg-color: #0d1117; /* GitHub Dark Background */
+    --sidebar-bg: #161b22; /* Slightly Lighter Background */
+    --main-bg: #161b22;
+    --text-color: #c9d1d9; /* Softer White Text */
+    --text-muted: #8b949e; /* Muted Grey Text */
+    --border-color: #30363d;
+    --primary-color: #58a6ff; /* Bright Blue Accent */
+    --primary-hover-bg: rgba(88, 166, 255, 0.1); /* Subtle Blue Glow */
+    --cell-bg: #21262d;
+    --cell-hover-border: #58a6ff;
+    --shadow-color: rgba(0, 0, 0, 0.2);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 15px; /* Reduced base font size */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    /* Font rendering optimizations */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+.page-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ===== SIDEBAR STYLES ===== */
+.sidebar {
+    width: 220px; /* Slightly narrower */
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem 0.75rem;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    flex-shrink: 0;
+}
+
+.sidebar-header h1 {
+    font-size: 1.25rem; /* Reduced */
+    font-weight: 600;
+    color: var(--text-color);
+    padding: 0 0.75rem;
+}
+
+.nav-links {
+    list-style: none;
+    margin-top: 1.5rem;
+}
+
+.nav-links li a, .sidebar-footer a {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 0.75rem; /* Tighter padding */
+    text-decoration: none;
+    color: var(--text-muted);
+    border-radius: 6px; /* Sharper corners */
+    font-weight: 500;
+    font-size: 0.95rem; /* Reduced */
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.nav-links li a .material-symbols-outlined,
+.sidebar-footer a .material-symbols-outlined {
+    margin-right: 0.75rem;
+    font-size: 1.25rem; /* Reduced */
+}
+
+.nav-links li a:hover, .sidebar-footer a:hover {
+    background-color: var(--primary-hover-bg);
+    color: var(--primary-color);
+}
+
+.nav-links li a.active {
+    background-color: var(--primary-hover-bg);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+}
+
+/* ===== MAIN CONTENT STYLES ===== */
+.main-content {
+    flex-grow: 1;
+    padding: 1.5rem 2.5rem; /* Tighter padding */
+    overflow-y: auto;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    background-color: var(--bg-color); /* Matches page bg */
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0 0.6rem;
+    width: 40%;
+    max-width: 380px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-container:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-hover-bg);
+}
+
+.search-container .material-symbols-outlined {
+    color: var(--text-muted);
+}
+
+#search-company {
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 0.6rem 0.5rem; /* Tighter padding */
+    background-color: transparent;
+    color: var(--text-color);
+    font-size: 0.95rem; /* Reduced */
+}
+
+/* ===== THEME SWITCHER STYLES ===== */
+.theme-switcher {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.mode-text {
+    font-weight: 500;
+    color: var(--text-muted);
+    font-size: 0.85rem; /* Reduced */
+}
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px; /* Smaller */
+    height: 24px; /* Smaller */
+}
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .3s;
+    border-radius: 24px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px; /* Smaller */
+    width: 18px;  /* Smaller */
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+}
+input:checked + .slider { background-color: var(--primary-color); }
+input:checked + .slider:before { transform: translateX(20px); }
+
+/* ===== COMPANY GRID STYLES ===== */
+.company-section h2 {
+    font-size: 1.5rem; /* Reduced */
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.75rem;
+}
+
+.company-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* Smaller min-width */
+    gap: 1.25rem; /* Tighter gap */
+}
+
+.company-cell {
+    background-color: var(--cell-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px; /* Sharper corners */
+    padding: 1.5rem 1rem;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 1rem; /* Reduced */
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.company-cell:hover {
+    border-color: var(--cell-hover-border);
+    color: var(--primary-color);
+}
+
+/* (Keep all your existing CSS above this line) */
+
+/* ===== SIDEBAR BUTTON STYLES ===== */
+.settings-btn {
+    /* Style the button to look exactly like the links */
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    color: var(--text-muted);
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.settings-btn .material-symbols-outlined {
+    margin-right: 0.75rem;
+    font-size: 1.25rem;
+}
+
+.settings-btn:hover {
+    background-color: var(--primary-hover-bg);
+    color: var(--primary-color);
+}
+
+
+/* ===== MODAL STYLES (New Addition) ===== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent backdrop */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none; /* Prevent interaction when hidden */
+}
+
+.modal-content {
+    background-color: var(--sidebar-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    transform: scale(1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.modal-overlay.hidden .modal-content {
+    transform: scale(0.95);
+}
+
+.modal-content h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+.settings-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.delete-button {
+    background: none;
+    border: 1px solid #ef4444; /* Red border */
+    color: #ef4444; /* Red text */
+    padding: 0.75rem 1rem;
+    width: 100%;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.delete-button .material-symbols-outlined {
+    margin-right: 0.75rem;
+}
+
+.delete-button:hover {
+    background-color: #ef4444; /* Red background on hover */
+    color: #ffffff; /* White text on hover */
+}

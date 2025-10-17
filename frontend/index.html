@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CP Tracker - Home</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <script src="script.js" defer></script>
+</head>
+<body class="dark-mode">
+
+    <div class="page-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h1>CP Tracker</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="active"><span class="material-symbols-outlined">home</span> Home</a></li>
+                <li><a href="filters.html"><span class="material-symbols-outlined">filter_alt</span> Filters</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <button id="settings-btn" class="settings-btn">
+                    <span class="material-symbols-outlined">settings</span> Settings
+                </button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="main-header">
+                <div class="search-container">
+                    <span class="material-symbols-outlined">search</span>
+                    <input type="search" id="search-company" placeholder="Search for a company...">
+                </div>
+
+                <div class="theme-switcher">
+                    <span class="mode-text">Light</span>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="mode-text">Dark</span>
+                </div>
+            </header>
+
+            <section class="company-section">
+                <h2>Companies</h2>
+                <div id="company-grid" class="company-grid">
+                    </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="settings-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3>Settings</h3>
+            <ul class="settings-menu">
+                <li>
+                    <button id="delete-data-btn" class="delete-button">
+                        <span class="material-symbols-outlined">delete_forever</span>
+                        Delete all user data
+                    </button>
+                </li>
+                </ul>
+        </div>
+    </div>
+
+</body>
+</html>

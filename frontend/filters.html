@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CP Tracker - Filters</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="filters.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <script src="filters.js" defer></script>
+</head>
+<body class="dark-mode">
+
+    <div class="page-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h1>CP Tracker</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html"><span class="material-symbols-outlined">home</span> Home</a></li>
+                <li><a href="filters.html" class="active"><span class="material-symbols-outlined">filter_alt</span> Filters</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <button id="settings-btn" class="settings-btn">
+                    <span class="material-symbols-outlined">settings</span> Settings
+                </button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="main-header">
+                <h2>Filter Questions</h2>
+                <div class="theme-switcher">
+                    <span class="mode-text">Light</span>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="mode-text">Dark</span>
+                </div>
+            </header>
+
+            <section class="filter-controls">
+                <div class="filter-group">
+                    <label for="filter-company">Company</label>
+                    <select id="filter-company">
+                        <option value="all">All Companies</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Topics</label>
+                    <div class="custom-multiselect">
+                        <div class="select-box" id="topic-select-box">
+                            <span id="topic-select-text">Select topics...</span>
+                            <span class="material-symbols-outlined">arrow_drop_down</span>
+                        </div>
+                        <div id="topics-dropdown" class="topics-dropdown"></div>
+                    </div>
+                </div>
+                 <div class="filter-group">
+                    <label for="filter-time">Time Period</label>
+                    <select id="filter-time">
+                        <option value="all">All Time</option>
+                        <option value="1">Last 30 Days</option>
+                        <option value="2">Last 2 Months</option>
+                        <option value="3">Last 3 Months</option>
+                    </select>
+                </div>
+                <!-- <div class="filter-group">
+                    <label for="sort-by">Sort By</label>
+                    <select id="sort-by">
+                        <option value="frequency">Frequency</option>
+                        <option value="difficulty">Difficulty</option>
+                        <option value="acceptance">Acceptance Rate</option>
+                    </select>
+                </div> -->
+                <div class="filter-group checkbox-group">
+                    <input type="checkbox" id="filter-solved">
+                    <label for="filter-solved">Show Solved Only</label>
+                </div>
+                <div class="filter-group checkbox-group">
+                    <input type="checkbox" id="filter-flagged">
+                    <label for="filter-flagged">Show Flagged Only</label>
+                </div>
+            </section>
+
+            <section class="question-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="col-solved">
+                            <label class="checkbox-header">
+                                <input type="checkbox" id="filter-solved-header">
+                                <span>Show Solved</span>
+                            </label>
+                            </th>
+                            <th class="col-flag">
+                            <label class="checkbox-header">
+                                <input type="checkbox" id="filter-flagged-header">
+                                <span>Show Flagged</span>
+                            </label>
+                            </th>
+                            <th class="col-title">Title</th>
+
+                            <th class="col-difficulty sortable" data-sort="difficulty">
+                            Difficulty
+                            <span class="sort-icons-horizontal">
+                                <span class="material-symbols-outlined sort-up" data-direction="asc">arrow_upward</span>
+                                <span class="material-symbols-outlined sort-down" data-direction="desc">arrow_downward</span>
+                            </span>
+                            </th>
+                            <th class="col-acceptance sortable" data-sort="acceptance">
+                            Acceptance
+                            <span class="sort-icons-horizontal">
+                                <span class="material-symbols-outlined sort-up" data-direction="asc">arrow_upward</span>
+                                <span class="material-symbols-outlined sort-down" data-direction="desc">arrow_downward</span>
+                            </span>
+                            </th>
+                            <th class="col-frequency sortable" data-sort="frequency">
+                            Frequency
+                            <span class="sort-icons-horizontal">
+                                <span class="material-symbols-outlined sort-up" data-direction="asc">arrow_upward</span>
+                                <span class="material-symbols-outlined sort-down" data-direction="desc">arrow_downward</span>
+                            </span>
+                            </th>
+                            <th class="col-topics">Topics</th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody id="question-table-body"></tbody>
+                </table>
+            </section>
+            
+            <section class="pagination-container" id="pagination-container">
+                <div class="page-size-selector">
+                    <label for="page-size">Rows per page:</label>
+                    <select id="page-size">
+                        <option value="10">10</option>
+                        <option value="25" selected>25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+                <div class="page-navigation" id="page-navigation"></div>
+            </section>
+        </main>
+    </div>
+    <div id="settings-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3>Settings</h3>
+            <ul class="settings-menu">
+                <li>
+                    <button id="delete-data-btn" class="delete-button">
+                        <span class="material-symbols-outlined">delete_forever</span>
+                        Delete all user data
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="comment-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3>Add/Edit Note</h3>
+            <p id="modal-question-title" class="modal-question-title"></p>
+            <textarea id="comment-textarea" placeholder="Add your notes here..."></textarea>
+            <div class="modal-actions">
+                <button id="cancel-comment-btn" class="button-secondary">Cancel</button>
+                <button id="save-comment-btn" class="button-primary">Save Note</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
