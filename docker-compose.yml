@@ -9,6 +9,7 @@ services:
       - ./frontend:/usr/share/nginx/html  # serve your site
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - ./certbot:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot 
     depends_on:
       - backend
     networks:
@@ -50,7 +51,7 @@ services:
     image: certbot/certbot
     volumes:
       - ./certbot:/etc/letsencrypt
-      - ./frontend:/usr/share/nginx/html
+      - ./certbot/www:/var/www/certbot 
     entrypoint: /bin/sh
     networks:
       - backend_network
