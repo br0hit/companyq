@@ -13,6 +13,30 @@
     margin: 0;
 }
 
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.header-github-link {
+    display: flex;
+    align-items: center;
+    color: var(--text-muted);
+    transition: color 0.2s ease, transform 0.2s ease;
+    text-decoration: none;
+}
+
+.header-github-link:hover {
+    color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+.header-github-icon {
+    width: 24px;
+    height: 24px;
+}
+
 /* ===== FILTER CONTROLS ===== */
 .filter-controls {
     display: flex;
