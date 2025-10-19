@@ -1,28 +1,33 @@
 document.addEventListener('DOMContentLoaded', async () => {
     
-    
-
-
     // --- ELEMENTS ---
     const themeToggle = document.getElementById('theme-toggle');
     const body = document.body;
     const companyGrid = document.getElementById('company-grid');
+    const allCompaniesDropdown = document.getElementById('all-companies-dropdown');
     const searchInput = document.getElementById('search-company');
     
-    // Try to load cached companies from localStorage
-    // let companies = JSON.parse(localStorage.getItem('companiesList')) || [];
+    let popularCompanies = [];
+    let allCompanies = [];
 
-    {
-        try {
-            const response = await fetch("/companies/");
-            const data = await response.json();
-            companies = data.map(item => item.name);
-            localStorage.setItem('companiesList', JSON.stringify(companies));
-        } catch (err) {
-            console.error("Failed to fetch companies:", err);
-            companyGrid.innerHTML = `<p style="color:red;">Could not load companies.</p>`;
-            return;
-        }
+    // Fetch popular companies from API
+    try {
+        const response = await fetch("/companies/");
+        const data = await response.json();
+        popularCompanies = data.map(item => item.name);
+    } catch (err) {
+        console.error("Failed to fetch popular companies:", err);
+        companyGrid.innerHTML = `<p style="color:red;">Could not load companies.</p>`;
+    }
+
+    // Fetch all companies from companies.json
+    try {
+        const response = await fetch("/companies.json");
+        const data = await response.json();
+        allCompanies = data.map(item => item.name);
+    } catch (err) {
+        console.error("Failed to fetch all companies:", err);
+        allCompaniesDropdown.innerHTML = `<p style="color:red;">Could not load companies list.</p>`;
     }
 
     // Modal elements
@@ -49,85 +54,31 @@ document.addEventListener('DOMContentLoaded', async () => {
         applyTheme(newTheme);
     });
 
-    // // --- COMPANY GRID RENDERING ---
-    // const renderCompanies = (companyList) => {
-    //     companyGrid.innerHTML = '';
-    //     if (companyList.length === 0) {
-    //         companyGrid.innerHTML = `<p class="no-results">No companies found.</p>`;
-    //         return;
-    //     }
-    //     // companyList.forEach(company => {
-    //     //     const companyCell = document.createElement('a');
-    //     //     companyCell.href = "#";
-    //     //     companyCell.className = 'company-cell';
-    //     //     companyCell.textContent = company;
-    //     //     companyGrid.appendChild(companyCell);
-    //     // });
-    //     companyList.forEach(company => {
-    //     const companyCell = document.createElement('a');
-    //     companyCell.href = "/filters";
-    //     companyCell.className = 'company-cell';
-    //     companyCell.textContent = company;
-
-    //     // When clicked, fetch question data and store locally
-    //     companyCell.addEventListener('click', async (e) => {
-    //         e.preventDefault(); // prevent immediate navigation
-    //         try {
-    //             // API URL placeholder (you'll fill this later)
-    //             const response = await fetch(`http://127.0.0.1/company-questions/?company_name=${company}`);
-    //             if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    //             const data = await response.json();
-
-    //             // Store company name and its data in localStorage
-    //             localStorage.setItem('selectedCompany', company);
-    //             localStorage.setItem('companyData', JSON.stringify(data));
-
-    //             // Navigate to filters page after storing
-    //             window.location.href = '/filters';
-    //         } catch (err) {
-    //             console.error('Failed to fetch company questions:', err);
-    //             alert(`Could not load questions for ${company}`);
-    //         }
-    //     });
-
-    //     companyGrid.appendChild(companyCell);
-    //     });
-
-    // };
-
-
-    // --- COMPANY GRID RENDERING ---
-    const renderCompanies = (companyList) => {
-        // 1. Clear the grid of any existing companies
-        companyGrid.innerHTML = ''; 
-
-        // 2. Check if the filtered list is empty
+    // --- POPULAR COMPANIES GRID RENDERING ---
+    const renderPopularCompanies = (companyList) => {
+        companyGrid.innerHTML = '';
+        
         if (companyList.length === 0) {
             companyGrid.innerHTML = `<p class="no-results">No companies found.</p>`;
-            return; // Stop the function here
+            return;
         }
 
-        // 3. If not empty, render the new list
         companyList.forEach(company => {
             const companyCell = document.createElement('a');
             companyCell.href = "/filters";
             companyCell.className = 'company-cell';
             companyCell.textContent = company;
 
-            // When clicked, fetch question data and store locally
             companyCell.addEventListener('click', async (e) => {
-                e.preventDefault(); // prevent immediate navigation
+                e.preventDefault();
                 try {
-                    // API URL placeholder (you'll fill this later)
                     const response = await fetch(`/company-questions/?company_name=${company}`);
                     if (!response.ok) throw new Error(`HTTP ${response.status}`);
                     const data = await response.json();
 
-                    // Store company name and its data in localStorage
                     localStorage.setItem('selectedCompany', company);
                     localStorage.setItem('companyData', JSON.stringify(data));
 
-                    // Navigate to filters page after storing
                     window.location.href = '/filters';
                 } catch (err) {
                     console.error('Failed to fetch company questions:', err);
@@ -138,61 +89,89 @@ document.addEventListener('DOMContentLoaded', async () => {
             companyGrid.appendChild(companyCell);
         });
     };
-    renderCompanies(companies);
+
+    // --- ALL COMPANIES DROPDOWN RENDERING (limited to 5 results) ---
+    const renderAllCompanies = (companyList) => {
+        allCompaniesDropdown.innerHTML = '';
+        
+        if (companyList.length === 0) {
+            allCompaniesDropdown.innerHTML = `<p class="no-results">No companies found.</p>`;
+            return;
+        }
+
+        // Limit to first 5 results
+        const limitedList = companyList.slice(0, 5);
+
+        limitedList.forEach(company => {
+            const companyItem = document.createElement('a');
+            companyItem.href = "/filters";
+            companyItem.className = 'company-item';
+            companyItem.textContent = company;
+
+            companyItem.addEventListener('click', async (e) => {
+                e.preventDefault();
+                try {
+                    const response = await fetch(`/company-questions/?company_name=${company}`);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const data = await response.json();
+
+                    localStorage.setItem('selectedCompany', company);
+                    localStorage.setItem('companyData', JSON.stringify(data));
+
+                    window.location.href = '/filters';
+                } catch (err) {
+                    console.error('Failed to fetch company questions:', err);
+                    alert(`Could not load questions for ${company}`);
+                }
+            });
+
+            allCompaniesDropdown.appendChild(companyItem);
+        });
+    };
+
+    // Initial render
+    renderPopularCompanies(popularCompanies);
+    renderAllCompanies(allCompanies);
     
-    // --- SEARCH FUNCTIONALITY ---
+    // --- SEARCH FUNCTIONALITY (searches all companies, shows first 5) ---
     searchInput.addEventListener('input', (e) => {
         const searchTerm = e.target.value.toLowerCase().trim();
-        const filteredCompanies = companies.filter(company => 
+        const filteredCompanies = allCompanies.filter(company => 
             company.toLowerCase().includes(searchTerm)
         );
-        renderCompanies(filteredCompanies);
+        renderAllCompanies(filteredCompanies);
     });
 
-    // --- SETTINGS MODAL LOGIC (New Addition) ---
-    // Function to open the modal
+    // --- SETTINGS MODAL LOGIC ---
     const openModal = () => {
         settingsModal.classList.remove('hidden');
     };
 
-    // Function to close the modal
     const closeModal = () => {
         settingsModal.classList.add('hidden');
     };
 
-    // Event listener to open the modal when the settings button is clicked
     settingsBtn.addEventListener('click', openModal);
 
-    // Event listener to close the modal if the user clicks on the overlay
     settingsModal.addEventListener('click', (e) => {
-        // We only close if the user clicked the overlay itself, not the content inside
         if (e.target === settingsModal) {
             closeModal();
         }
     });
 
-    // Event listener for the "Delete all user data" button
     deleteDataBtn.addEventListener('click', () => {
         const confirmation = confirm(
             "Are you sure you want to delete all your data? This action cannot be undone."
         );
         
         if (confirmation) {
-            // If user confirms, proceed with deletion logic
             console.log("User confirmed. Deleting data...");
-            // In a real application, you would make an API call here to delete data.
             localStorage.clear();
             alert("All user data has been deleted.");
-            closeModal(); // Close the modal after action
+            closeModal();
         } else {
-            // If user cancels, do nothing
             console.log("User cancelled the action.");
         }
     });
-
-    // --- CLEAR COMPANIES LIST WHEN USER CLOSES TAB / WEBSITE ---
-    // window.addEventListener('beforeunload', () => {
-    //     localStorage.removeItem('companiesList');
-    // });
 
 });

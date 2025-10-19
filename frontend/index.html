@@ -23,6 +23,12 @@
                 <li><a href="/filters"><span class="material-symbols-outlined">filter_alt</span> Filters</a></li>
             </ul>
             <div class="sidebar-footer">
+                <a href="https://github.com/br0hit/companyq" target="_blank" class="sidebar-link">
+                    <svg class="github-icon" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                    </svg>
+                    GitHub
+                </a>
                 <button id="settings-btn" class="settings-btn">
                     <span class="material-symbols-outlined">settings</span> Settings
                 </button>
@@ -31,11 +37,6 @@
 
         <main class="main-content">
             <header class="main-header">
-                <div class="search-container">
-                    <span class="material-symbols-outlined">search</span>
-                    <input type="search" id="search-company" placeholder="Search for a company...">
-                </div>
-
                 <div class="theme-switcher">
                     <span class="mode-text">Light</span>
                     <label class="switch">
@@ -47,9 +48,40 @@
             </header>
 
             <section class="company-section">
-                <h2>Companies</h2>
+                <h2>Popular Companies this month</h2>
                 <div id="company-grid" class="company-grid">
-                    </div>
+                </div>
+            </section>
+
+            <section class="all-companies-section">
+                <h2>All Companies</h2>
+                <div class="search-container">
+                    <span class="material-symbols-outlined">search</span>
+                    <input type="search" id="search-company" placeholder="Search for a company...">
+                </div>
+                <div id="all-companies-dropdown" class="companies-dropdown">
+                </div>
+            </section>
+
+            <section class="how-to-use-section">
+                <h2>How to Use</h2>
+                <div class="instruction-card">
+                    <ol class="instruction-list">
+                        <li>Choose a company from the list above</li>
+                        <li>Select a time period:
+                            <ul class="time-period-list">
+                                <li>Last 30 days</li>
+                                <li>Last 3 months</li>
+                                <li>Last 6 months</li>
+                                <li>More than 6 months</li>
+                                <li>All (default)</li>
+                            </ul>
+                        </li>
+                        <li>View all LeetCode questions for that company</li>
+                        <li>Track your progress by clicking the "Solved" button</li>
+                        <li>Add remarks by flagging a question and entering your notes</li>
+                    </ol>
+                </div>
             </section>
         </main>
     </div>
@@ -64,7 +96,7 @@
                         Delete all user data
                     </button>
                 </li>
-                </ul>
+            </ul>
         </div>
     </div>
 

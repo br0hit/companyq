@@ -39,9 +39,8 @@ body {
     font-family: 'Inter', sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
-    font-size: 15px; /* Reduced base font size */
+    font-size: 15px;
     transition: background-color 0.3s ease, color 0.3s ease;
-    /* Font rendering optimizations */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -54,7 +53,7 @@ body {
 
 /* ===== SIDEBAR STYLES ===== */
 .sidebar {
-    width: 220px; /* Slightly narrower */
+    width: 220px;
     background-color: var(--sidebar-bg);
     border-right: 1px solid var(--border-color);
     display: flex;
@@ -65,7 +64,7 @@ body {
 }
 
 .sidebar-header h1 {
-    font-size: 1.25rem; /* Reduced */
+    font-size: 1.25rem;
     font-weight: 600;
     color: var(--text-color);
     padding: 0 0.75rem;
@@ -79,19 +78,19 @@ body {
 .nav-links li a, .sidebar-footer a {
     display: flex;
     align-items: center;
-    padding: 0.6rem 0.75rem; /* Tighter padding */
+    padding: 0.6rem 0.75rem;
     text-decoration: none;
     color: var(--text-muted);
-    border-radius: 6px; /* Sharper corners */
+    border-radius: 6px;
     font-weight: 500;
-    font-size: 0.95rem; /* Reduced */
+    font-size: 0.95rem;
     transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 .nav-links li a .material-symbols-outlined,
 .sidebar-footer a .material-symbols-outlined {
     margin-right: 0.75rem;
-    font-size: 1.25rem; /* Reduced */
+    font-size: 1.25rem;
 }
 
 .nav-links li a:hover, .sidebar-footer a:hover {
@@ -109,16 +108,39 @@ body {
     margin-top: auto;
 }
 
+.sidebar-footer .sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 0.75rem;
+    text-decoration: none;
+    color: var(--text-muted);
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-footer .sidebar-link:hover {
+    background-color: var(--primary-hover-bg);
+    color: var(--primary-color);
+}
+
+.github-icon {
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+}
+
 /* ===== MAIN CONTENT STYLES ===== */
 .main-content {
     flex-grow: 1;
-    padding: 1.5rem 2.5rem; /* Tighter padding */
+    padding: 1.5rem 2.5rem;
     overflow-y: auto;
 }
 
 .main-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     margin-bottom: 1.5rem;
 }
@@ -126,12 +148,13 @@ body {
 .search-container {
     display: flex;
     align-items: center;
-    background-color: var(--bg-color); /* Matches page bg */
+    background-color: var(--bg-color);
     border: 1px solid var(--border-color);
     border-radius: 6px;
     padding: 0 0.6rem;
-    width: 40%;
-    max-width: 380px;
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
@@ -148,10 +171,10 @@ body {
     width: 100%;
     border: none;
     outline: none;
-    padding: 0.6rem 0.5rem; /* Tighter padding */
+    padding: 0.6rem 0.5rem;
     background-color: transparent;
     color: var(--text-color);
-    font-size: 0.95rem; /* Reduced */
+    font-size: 0.95rem;
 }
 
 /* ===== THEME SWITCHER STYLES ===== */
@@ -163,13 +186,13 @@ body {
 .mode-text {
     font-weight: 500;
     color: var(--text-muted);
-    font-size: 0.85rem; /* Reduced */
+    font-size: 0.85rem;
 }
 .switch {
     position: relative;
     display: inline-block;
-    width: 44px; /* Smaller */
-    height: 24px; /* Smaller */
+    width: 44px;
+    height: 24px;
 }
 .switch input { opacity: 0; width: 0; height: 0; }
 .slider {
@@ -186,8 +209,8 @@ body {
 .slider:before {
     position: absolute;
     content: "";
-    height: 18px; /* Smaller */
-    width: 18px;  /* Smaller */
+    height: 18px;
+    width: 18px;
     left: 3px;
     bottom: 3px;
     background-color: white;
@@ -197,9 +220,13 @@ body {
 input:checked + .slider { background-color: var(--primary-color); }
 input:checked + .slider:before { transform: translateX(20px); }
 
-/* ===== COMPANY GRID STYLES ===== */
+/* ===== COMPANY SECTION STYLES ===== */
+.company-section {
+    margin-bottom: 3rem;
+}
+
 .company-section h2 {
-    font-size: 1.5rem; /* Reduced */
+    font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 1.25rem;
     border-bottom: 1px solid var(--border-color);
@@ -208,20 +235,20 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 .company-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* Smaller min-width */
-    gap: 1.25rem; /* Tighter gap */
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.25rem;
 }
 
 .company-cell {
     background-color: var(--cell-bg);
     border: 1px solid var(--border-color);
-    border-radius: 6px; /* Sharper corners */
+    border-radius: 6px;
     padding: 1.5rem 1rem;
     text-align: center;
     text-decoration: none;
     color: var(--text-color);
     font-weight: 500;
-    font-size: 1rem; /* Reduced */
+    font-size: 1rem;
     transition: border-color 0.2s ease, color 0.2s ease;
 }
 
@@ -230,11 +257,123 @@ input:checked + .slider:before { transform: translateX(20px); }
     color: var(--primary-color);
 }
 
-/* (Keep all your existing CSS above this line) */
+/* ===== ALL COMPANIES SECTION STYLES ===== */
+.all-companies-section {
+    margin-bottom: 3rem;
+}
+
+.all-companies-section h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.75rem;
+}
+
+.companies-dropdown {
+    background-color: var(--cell-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.company-item {
+    display: block;
+    padding: 0.75rem 1.25rem;
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.company-item:last-child {
+    border-bottom: none;
+}
+
+.company-item:hover {
+    background-color: var(--primary-hover-bg);
+    color: var(--primary-color);
+}
+
+.no-results {
+    padding: 1.5rem;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+/* ===== HOW TO USE SECTION STYLES ===== */
+.how-to-use-section {
+    margin-bottom: 2rem;
+}
+
+.how-to-use-section h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.75rem;
+}
+
+.instruction-card {
+    background-color: var(--cell-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 1.5rem;
+}
+
+.instruction-list {
+    list-style: none;
+    counter-reset: instruction-counter;
+    margin: 0;
+    padding: 0;
+}
+
+.instruction-list > li {
+    counter-increment: instruction-counter;
+    margin-bottom: 1rem;
+    padding-left: 2.5rem;
+    position: relative;
+    line-height: 1.6;
+}
+
+.instruction-list > li:last-child {
+    margin-bottom: 0;
+}
+
+.instruction-list > li::before {
+    content: counter(instruction-counter);
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: var(--primary-color);
+    color: white;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.time-period-list {
+    list-style: disc;
+    margin-top: 0.5rem;
+    margin-left: 1.5rem;
+    color: var(--text-muted);
+}
+
+.time-period-list li {
+    margin-bottom: 0.25rem;
+    line-height: 1.5;
+}
 
 /* ===== SIDEBAR BUTTON STYLES ===== */
 .settings-btn {
-    /* Style the button to look exactly like the links */
     display: flex;
     align-items: center;
     width: 100%;
@@ -261,15 +400,14 @@ input:checked + .slider:before { transform: translateX(20px); }
     color: var(--primary-color);
 }
 
-
-/* ===== MODAL STYLES (New Addition) ===== */
+/* ===== MODAL STYLES ===== */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent backdrop */
+    background-color: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -280,7 +418,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 .modal-overlay.hidden {
     opacity: 0;
-    pointer-events: none; /* Prevent interaction when hidden */
+    pointer-events: none;
 }
 
 .modal-content {
@@ -313,8 +451,8 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 .delete-button {
     background: none;
-    border: 1px solid #ef4444; /* Red border */
-    color: #ef4444; /* Red text */
+    border: 1px solid #ef4444;
+    color: #ef4444;
     padding: 0.75rem 1rem;
     width: 100%;
     border-radius: 6px;
@@ -332,6 +470,6 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 .delete-button:hover {
-    background-color: #ef4444; /* Red background on hover */
-    color: #ffffff; /* White text on hover */
+    background-color: #ef4444;
+    color: #ffffff;
 }
