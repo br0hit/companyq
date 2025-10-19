@@ -62,7 +62,7 @@ def get_company_questions(company_name: str, db: Session = Depends(get_db)):
 @app.get("/companies/")
 def get_companies_sorted(db: Session = Depends(get_db)):
     # Define fixed time period
-    time_period = "5. All"
+    time_period = "1. Thirty Days"
 
     # Query to get companies sorted by number of questions for this   period
     company_counts = (
@@ -75,6 +75,7 @@ def get_companies_sorted(db: Session = Depends(get_db)):
         .filter(CompanyQuestion.time_period == time_period)
         .group_by(Company.id, Company.name)
         .order_by(func.count(CompanyQuestion.id).desc())
+        .limit(10)
         .all()
     )
 
