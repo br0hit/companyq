@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     };
 
-    // --- ALL COMPANIES DROPDOWN RENDERING (limited to 5 results) ---
+    // --- ALL COMPANIES DROPDOWN RENDERING ---
     const renderAllCompanies = (companyList) => {
         allCompaniesDropdown.innerHTML = '';
         
@@ -99,10 +99,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // Limit to first 5 results
-        const limitedList = companyList.slice(0, 5);
-
-        limitedList.forEach(company => {
+        // Render all companies (scrollable dropdown)
+        companyList.forEach(company => {
             const companyItem = document.createElement('a');
             companyItem.href = "/filters";
             companyItem.className = 'company-item';

@@ -129,6 +129,7 @@ body {
 .github-icon {
     margin-right: 0.75rem;
     flex-shrink: 0;
+    min-width: 20px;
 }
 
 /* ===== MAIN CONTENT STYLES ===== */
@@ -274,7 +275,8 @@ input:checked + .slider:before { transform: translateX(20px); }
     background-color: var(--cell-bg);
     border: 1px solid var(--border-color);
     border-radius: 6px;
-    overflow: hidden;
+    max-height: 250px;
+    overflow-y: auto;
 }
 
 .company-item {
