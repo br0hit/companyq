@@ -8,13 +8,20 @@
     border: 1px solid var(--border-color);
     border-radius: 8px;
     margin-bottom: 2rem;
+    align-items: flex-end;
+}
+
+/* Light mode specific styling for filter controls */
+body:not(.dark-mode) .filter-controls {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
 }
 
 .filter-group {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    min-width: 180px;
+    min-width: 220px;
     flex-grow: 1;
 }
 
@@ -39,6 +46,13 @@
     width: 100%;
 }
 
+/* Light mode specific styling for selects */
+body:not(.dark-mode) .filter-group select {
+    background-color: #ffffff;
+    border-color: #cbd5e1;
+    color: #1e293b;
+}
+
 .filter-group select:focus {
     outline: none;
     border-color: var(--primary-color);
@@ -56,6 +70,35 @@
     align-self: flex-end; /* Align to the bottom of the flex container */
     min-width: fit-content;
     padding-bottom: 0.6rem; /* Align with select padding */
+    margin-left: auto; /* Push to the right */
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+.clear-data-btn {
+    background-color: #7f1d1d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+}
+
+.clear-data-btn:hover {
+    background-color: #6b1c1c;
+    transform: translateY(-1px);
+}
+
+.clear-data-btn:active {
+    transform: translateY(0);
 }
 
 .checkbox-group input[type="checkbox"] {
@@ -82,7 +125,29 @@
     text-transform: uppercase;
     font-size: 0.75rem;
     letter-spacing: 0.5px;
+    vertical-align: middle;
 }
+
+/* Light mode specific styling for table header */
+body:not(.dark-mode) .question-list th {
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+/* Added cursor pointer to sortable TH for the new clickable area */
+.question-list th.sortable {
+    cursor: pointer;
+}
+
+.question-list th.sortable:hover {
+    background-color: var(--primary-hover-bg);
+}
+
+/* Light mode hover for sortable headers */
+body:not(.dark-mode) .question-list th.sortable:hover {
+    background-color: #e2e8f0;
+}
+
 
 .question-list td {
     padding: 1rem;
@@ -95,6 +160,19 @@
 
 .question-list tbody tr:hover {
     background-color: var(--primary-hover-bg);
+}
+
+/* Light mode specific styling for table rows */
+body:not(.dark-mode) .question-list tbody tr {
+    background-color: #ffffff;
+}
+
+body:not(.dark-mode) .question-list tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+body:not(.dark-mode) .question-list td {
+    border-bottom-color: #e2e8f0;
 }
 
 /* Column specific widths */
@@ -165,10 +243,7 @@
     margin: 2px;
 }
 
-/* (Keep all your existing CSS above this line) */
-
-
-/* ===== PAGINATION STYLES (New Addition) ===== */
+/* ===== PAGINATION STYLES ===== */
 .pagination-container {
     display: flex;
     justify-content: space-between;
@@ -227,14 +302,6 @@
     font-weight: 600;
 }
 
-.col-solved { width: 5%; text-align: center;}
-.col-flag { width: 4%; }
-.col-title { width: 25%; }
-.col-difficulty { width: 12%; }
-.col-acceptance { width: 12%; }
-.col-frequency { width: 12%; }
-.col-topics { width: 30%; }
-
 /* ===== TOPIC MULTISELECT DROPDOWN ===== */
 .custom-multiselect {
     position: relative;
@@ -252,6 +319,13 @@
     cursor: pointer;
     color: var(--text-color);
     transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Light mode specific styling for select box */
+body:not(.dark-mode) .select-box {
+    background-color: #ffffff;
+    border-color: #cbd5e1;
+    color: #1e293b;
 }
 
 .select-box.open,
@@ -274,6 +348,13 @@
     box-shadow: 0 4px 12px var(--shadow-color);
     display: none;
     z-index: 10;
+}
+
+/* Light mode specific styling for dropdown */
+body:not(.dark-mode) .topics-dropdown {
+    background-color: #ffffff;
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .topics-dropdown.visible {
@@ -303,62 +384,32 @@
     font-variation-settings: 'FILL' 1;
 }
 
-/* ===== SORT ICONS ===== */
-.sort-icons {
-  display: inline-flex;
-  flex-direction: column;
-  vertical-align: middle;
-  margin-left: 0.3rem;
+/* ===== SORT ICON STYLES ===== */
+.sort-icon-combined {
+    display: inline-block;
+    font-size: 1.1em; /* Small size */
+    vertical-align: middle; /* Align vertically with the text */
+    color: var(--text-muted);
+    margin-left: 0.3rem; /* Small gap from text */
+    transition: color 0.2s ease;
 }
 
-.sort-icons .material-symbols-outlined {
-  font-size: 1rem;
-  cursor: pointer;
-  color: var(--text-muted);
-  line-height: 0.8;
-  transition: color 0.2s ease;
+.sort-icon-combined:hover {
+    color: var(--primary-color);
 }
 
-.sort-icons .material-symbols-outlined:hover {
-  color: var(--primary-color);
-}
-
-.sort-icons .active {
-  color: var(--primary-color);
-}
-
-/* ===== TABLE HEADER SORT ICONS (SIDE-BY-SIDE) ===== */
-.sort-icons-horizontal {
-  display: inline-flex;
-  gap: 0.2rem;
-  align-items: center;
-  margin-left: 0.4rem;
-  vertical-align: middle;
-}
-
-.sort-icons-horizontal .material-symbols-outlined {
-  font-size: 1.15rem;      /* bigger and clearer */
-  cursor: pointer;
-  color: var(--text-muted);
-  transition: color 0.2s ease, transform 0.15s ease;
-}
-
-.sort-icons-horizontal .material-symbols-outlined:hover {
-  color: var(--primary-color);
-  transform: scale(1.15);
-}
-
-.sort-icons-horizontal .active {
-  color: var(--primary-color);
+.sort-icon-combined.active {
+    color: var(--primary-color);
 }
 
 /* ===== HEADER CHECKBOX FILTERS (SOLVED / FLAGGED) ===== */
 .checkbox-header {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.3rem;
   font-size: 0.8rem;
   color: var(--text-muted);
+  white-space: nowrap;
 }
 
 .checkbox-header input[type="checkbox"] {

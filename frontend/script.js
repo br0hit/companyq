@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     //     // });
     //     companyList.forEach(company => {
     //     const companyCell = document.createElement('a');
-    //     companyCell.href = "filters.html";
+    //     companyCell.href = "/filters";
     //     companyCell.className = 'company-cell';
     //     companyCell.textContent = company;
 
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     //             localStorage.setItem('companyData', JSON.stringify(data));
 
     //             // Navigate to filters page after storing
-    //             window.location.href = 'filters.html';
+    //             window.location.href = '/filters';
     //         } catch (err) {
     //             console.error('Failed to fetch company questions:', err);
     //             alert(`Could not load questions for ${company}`);
@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 3. If not empty, render the new list
         companyList.forEach(company => {
             const companyCell = document.createElement('a');
-            companyCell.href = "filters.html";
+            companyCell.href = "/filters";
             companyCell.className = 'company-cell';
             companyCell.textContent = company;
 
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     localStorage.setItem('companyData', JSON.stringify(data));
 
                     // Navigate to filters page after storing
-                    window.location.href = 'filters.html';
+                    window.location.href = '/filters';
                 } catch (err) {
                     console.error('Failed to fetch company questions:', err);
                     alert(`Could not load questions for ${company}`);

@@ -69,21 +69,17 @@
                         <option value="3">Last 3 Months</option>
                     </select>
                 </div>
-                <!-- <div class="filter-group">
-                    <label for="sort-by">Sort By</label>
-                    <select id="sort-by">
-                        <option value="frequency">Frequency</option>
-                        <option value="difficulty">Difficulty</option>
-                        <option value="acceptance">Acceptance Rate</option>
-                    </select>
-                </div> -->
                 <div class="filter-group checkbox-group">
-                    <input type="checkbox" id="filter-solved">
-                    <label for="filter-solved">Show Solved Only</label>
+                    <button id="clear-solved-btn" class="clear-data-btn">
+                        <span class="material-symbols-outlined">delete</span>
+                        Clear Solved
+                    </button>
                 </div>
                 <div class="filter-group checkbox-group">
-                    <input type="checkbox" id="filter-flagged">
-                    <label for="filter-flagged">Show Flagged Only</label>
+                    <button id="clear-flagged-btn" class="clear-data-btn">
+                        <span class="material-symbols-outlined">delete</span>
+                        Clear Flagged
+                    </button>
                 </div>
             </section>
 
@@ -106,25 +102,16 @@
                             <th class="col-title">Title</th>
 
                             <th class="col-difficulty sortable" data-sort="difficulty">
-                            Difficulty
-                            <span class="sort-icons-horizontal">
-                                <span class="material-symbols-outlined sort-up" data-direction="asc">arrow_upward</span>
-                                <span class="material-symbols-outlined sort-down" data-direction="desc">arrow_downward</span>
-                            </span>
+                                Difficulty
+                                <span class="material-symbols-outlined sort-icon-combined" data-sort-icon>unfold_more</span>
                             </th>
                             <th class="col-acceptance sortable" data-sort="acceptance">
-                            Acceptance
-                            <span class="sort-icons-horizontal">
-                                <span class="material-symbols-outlined sort-up" data-direction="asc">arrow_upward</span>
-                                <span class="material-symbols-outlined sort-down" data-direction="desc">arrow_downward</span>
-                            </span>
+                                Acceptance
+                                <span class="material-symbols-outlined sort-icon-combined" data-sort-icon>unfold_more</span>
                             </th>
                             <th class="col-frequency sortable" data-sort="frequency">
-                            Frequency
-                            <span class="sort-icons-horizontal">
-                                <span class="material-symbols-outlined sort-up" data-direction="asc">arrow_upward</span>
-                                <span class="material-symbols-outlined sort-down" data-direction="desc">arrow_downward</span>
-                            </span>
+                                Frequency
+                                <span class="material-symbols-outlined sort-icon-combined" data-sort-icon>unfold_more</span>
                             </th>
                             <th class="col-topics">Topics</th>
                         </tr>

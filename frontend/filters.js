@@ -6,8 +6,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const questionTableBody = document.getElementById('question-table-body');
     const companyFilter = document.getElementById('filter-company');
     const timeFilter = document.getElementById('filter-time');
-    const flaggedFilter = document.getElementById('filter-flagged');
-    const solvedFilter = document.getElementById('filter-solved');
     const pageSizeSelector = document.getElementById('page-size');
     const pageNavigation = document.getElementById('page-navigation');
     const paginationContainer = document.getElementById('pagination-container');
@@ -21,10 +19,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const commentTextarea = document.getElementById('comment-textarea');
     const saveCommentBtn = document.getElementById('save-comment-btn');
     const cancelCommentBtn = document.getElementById('cancel-comment-btn');
-
-    // --- STATE ---
-    // let flaggedQuestions = new Set(JSON.parse(localStorage.getItem('flaggedQuestions')) || []);
-    // let flaggedQuestionsMap = new Map(Object.entries(JSON.parse(localStorage.getItem('flaggedQuestionsMap')) || {}));
+    const clearSolvedBtn = document.getElementById('clear-solved-btn');
+    const clearFlaggedBtn = document.getElementById('clear-flagged-btn');
 
     // --- STATE ---
     const storedFlags = JSON.parse(localStorage.getItem('flaggedQuestionsMap')) || {};
@@ -95,24 +91,38 @@ document.addEventListener('DOMContentLoaded', async () => {
      * Main initialization function on page load.
      */
     async function initializeApp() {
-        // Populate company dropdown first
-        let companies = JSON.parse(localStorage.getItem('companiesList')) || [];
-        if (companies.length === 0) {
-            try {
-                const response = await fetch('/companies/');
-                const data = await response.json();
-                companies = data.map(item => item.name);
-                localStorage.setItem('companiesList', JSON.stringify(companies));
-            } catch (err) {
-                console.error("Failed to load company list:", err);
+        // Load companies from companies.json file
+        let companiesData = [];
+        try {
+            const response = await fetch('companies.json');
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            companiesData = await response.json();
+            
+            // Store both company data and names list in localStorage
+            localStorage.setItem('companiesData', JSON.stringify(companiesData));
+            localStorage.setItem('companiesList', JSON.stringify(companiesData.map(c => c.name)));
+        } catch (err) {
+            console.error("Failed to load companies.json:", err);
+            // Fallback to localStorage if file fetch fails
+            const storedData = localStorage.getItem('companiesData');
+            if (storedData) {
+                companiesData = JSON.parse(storedData);
+            } else {
+                showErrorMessage("Could not load company list. Please refresh the page.");
+                return;
             }
         }
-        companies.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+
+        // Sort companies alphabetically by name
+        companiesData.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+        
+        // Populate company dropdown
         companyFilter.innerHTML = '';
-        companies.forEach(c => {
+        companiesData.forEach(company => {
             const option = document.createElement('option');
-            option.value = c;
-            option.textContent = c;
+            option.value = company.name;
+            option.textContent = company.name;
+            option.dataset.companyId = company.company_id; // Store company_id as data attribute
             companyFilter.appendChild(option);
         });
 
@@ -127,6 +137,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         companyFilter.value = storedCompany;
         processCompanyData(companyData);
+        
+        // Initial setup for the sort icon display
+        updateSortIcons(currentSortColumn, currentSortDirection);
     }
 
     // --- UI POPULATION & RENDERING ---
@@ -196,13 +209,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         questionsToRender.forEach(q => {
             const row = document.createElement('tr');
-            // const isFlagged = flaggedQuestions.has(q.question_id);
             const isFlagged = flaggedQuestionsMap.has(q.question_id);
             const isSolved = solvedQuestions.has(q.question_id);
             const topicsHTML = q.topics.map(t => `<span class="topic-tag">${t}</span>`).join('');
             
+            // Check if there's a comment to determine if the icon should be 'edit_note' or 'note_add'
+            const hasComment = flaggedQuestionsMap.get(q.question_id);
+            const noteIconName = hasComment ? 'edit_note' : 'note_add';
+
             const noteIconHTML = isFlagged 
-            ? `<span class="material-symbols-outlined edit-comment-icon" data-id="${q.question_id}" title="Edit Note">edit_note</span>` 
+            ? `<span class="material-symbols-outlined edit-comment-icon" data-id="${q.question_id}" title="${hasComment ? 'Edit Note' : 'Add Note'}">${noteIconName}</span>` 
             : '';
 
             row.innerHTML = `
@@ -223,59 +239,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     };
 
-    // <td class="col-flag">
-                //     <span class="material-symbols-outlined flag-icon ${isFlagged ? 'flagged' : ''}" data-id="${q.question_id}">bookmark</span>
-                // </td>
-
     // --- FILTER & SORT LOGIC ---
-
-    // const applyFiltersAndSort = () => {
-    //     // ***FIXED***: Directly use the timeFilter's value (which is now the correct key)
-    //     const selectedTimeKey = timeFilter.value;
-    //     let result = [...(companyDataMap[selectedTimeKey] || [])];
-
-    //     // Apply other filters
-    //     const selectedTopics = Array.from(topicsDropdown.querySelectorAll('input:checked')).map(cb => cb.value);
-    //     if (selectedTopics.length > 0) result = result.filter(q => selectedTopics.every(topic => q.topics.includes(topic)));
-    //     if (flaggedFilter.checked) result = result.filter(q => flaggedQuestions.has(q.question_id));
-    //     if (solvedFilter.checked) result = result.filter(q => solvedQuestions.has(q.question_id));
-
-    //     // Apply sorting
-    //     const difficultyMap = { 'EASY': 1, 'MEDIUM': 2, 'HARD': 3 };
-    //     if (currentSortColumn) {
-    //         result.sort((a, b) => {
-    //             let valA, valB;
-    //             switch (currentSortColumn) {
-    //                 case 'difficulty':
-    //                     valA = difficultyMap[a.difficulty] || 0;
-    //                     valB = difficultyMap[b.difficulty] || 0;
-    //                     break;
-    //                 case 'acceptance':
-    //                     valA = a.acceptance_rate;
-    //                     valB = b.acceptance_rate;
-    //                     break;
-    //                 case 'frequency':
-    //                     valA = a.frequency;
-    //                     valB = b.frequency;
-    //                     break;
-    //                 case 'flagged':
-    //                     valA = flaggedQuestions.has(a.question_id) ? 1 : 0;
-    //                     valB = flaggedQuestions.has(b.question_id) ? 1 : 0;
-    //                     break;
-    //                 case 'solved':
-    //                     valA = solvedQuestions.has(a.question_id) ? 1 : 0;
-    //                     valB = solvedQuestions.has(b.question_id) ? 1 : 0;
-    //                     break;
-    //                 default: return 0;
-    //             }
-    //             return currentSortDirection === 'asc' ? valA - valB : valB - valA;
-    //         });
-    //     }
-
-    //     filteredAndSortedQuestions = result;
-    //     currentPage = 1;
-    //     displayCurrentPage();
-    // };
 
     const applyFiltersAndSort = () => {
         const selectedTimeKey = timeFilter.value;
@@ -285,10 +249,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const selectedTopics = Array.from(topicsDropdown.querySelectorAll('input:checked')).map(cb => cb.value);
         if (selectedTopics.length > 0) result = result.filter(q => selectedTopics.every(topic => q.topics.includes(topic)));
         
-        // ***FIXED***: Use flaggedQuestionsMap for filtering
-        if (flaggedFilter.checked) result = result.filter(q => flaggedQuestionsMap.has(q.question_id));
-        
-        if (solvedFilter.checked) result = result.filter(q => solvedQuestions.has(q.question_id));
+        // Check header checkboxes for filtering
+        if (flaggedHeaderCheckbox.checked) result = result.filter(q => flaggedQuestionsMap.has(q.question_id));
+        if (solvedHeaderCheckbox.checked) result = result.filter(q => solvedQuestions.has(q.question_id));
 
         // Apply sorting
         const difficultyMap = { 'EASY': 1, 'MEDIUM': 2, 'HARD': 3 };
@@ -309,7 +272,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                         valB = b.frequency;
                         break;
                     case 'flagged':
-                        // ***FIXED***: Use flaggedQuestionsMap for sorting
                         valA = flaggedQuestionsMap.has(a.question_id) ? 1 : 0;
                         valB = flaggedQuestionsMap.has(b.question_id) ? 1 : 0;
                         break;
@@ -327,6 +289,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentPage = 1;
         displayCurrentPage();
     };
+    
+    // Updates the sort icons display (called from sort click and company change)
+    const updateSortIcons = (sortType, direction) => {
+        // 1. Reset all icons
+        document.querySelectorAll('.sortable .material-symbols-outlined').forEach(icon => {
+            icon.classList.remove('active');
+            icon.textContent = 'unfold_more'; // Default caret
+            icon.removeAttribute('data-direction');
+        });
+
+        // 2. Set the active icon
+        const activeHeader = document.querySelector(`.sortable[data-sort="${sortType}"]`);
+        const activeIcon = activeHeader ? activeHeader.querySelector('.material-symbols-outlined') : null;
+        
+        if (activeIcon) {
+            activeIcon.classList.add('active');
+            activeIcon.textContent = direction === 'asc' ? 'arrow_upward' : 'arrow_downward';
+            activeIcon.setAttribute('data-direction', direction); // Store direction for reference
+        }
+    };
+
 
     // --- PAGINATION ---
     const displayCurrentPage = () => {
@@ -364,44 +347,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // --- EVENT LISTENERS ---
 
-    // ***FIXED***: Removed the unused `sortBy` element.
-    [timeFilter, flaggedFilter, solvedFilter].forEach(el => {
-        el.addEventListener('change', applyFiltersAndSort);
-    });
+    timeFilter.addEventListener('change', applyFiltersAndSort);
     
     pageSizeSelector.addEventListener('change', (e) => {
         questionsPerPage = parseInt(e.target.value, 10);
         applyFiltersAndSort();
     });
     
-    // // Switch companies and reload data
-    // companyFilter.addEventListener('change', async () => {
-    //     const selectedCompany = companyFilter.value;
-    //     if (!selectedCompany) return;
-
-    //     questionTableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2rem;">Loading questions for ${selectedCompany}...</td></tr>`;
-
-    //     try {
-    //         // ***FIXED***: Corrected the fetch URL with the port.
-    //         const response = await fetch(`http://127.0.0.1/company-questions/?company_name=${selectedCompany}`);
-    //         if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    //         const data = await response.json();
-
-    //         localStorage.setItem('selectedCompany', selectedCompany);
-    //         localStorage.setItem('companyData', JSON.stringify(data));
-            
-    //         // ***FIXED***: Call the refactored function instead of re-initializing the whole app.
-    //         processCompanyData(data);
-    //     } catch (err) {
-    //         console.error(`Failed to fetch company data:`, err);
-    //         showErrorMessage(`Could not load data for ${selectedCompany}.`);
-    //     }
-    // });
-
     // Switch companies and reload data
     companyFilter.addEventListener('change', async () => {
         const selectedCompany = companyFilter.value;
         if (!selectedCompany) return;
+
+        // Get the company_id from the selected option
+        const selectedOption = companyFilter.options[companyFilter.selectedIndex];
+        const companyId = selectedOption.dataset.companyId;
 
         questionTableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2rem;">Loading questions for ${selectedCompany}...</td></tr>`;
 
@@ -411,29 +371,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             const data = await response.json();
 
             localStorage.setItem('selectedCompany', selectedCompany);
+            localStorage.setItem('selectedCompanyId', companyId); // Store company_id for future use
             localStorage.setItem('companyData', JSON.stringify(data));
 
-            // --- START: NEW CODE TO RESET SORT ORDER ---
-
-            // 1. Set the new default sort state
+            // Reset sort order
             currentSortColumn = 'frequency';
             currentSortDirection = 'desc'; 
+            updateSortIcons(currentSortColumn, currentSortDirection);
 
-            // 2. Update the UI icons to reflect this change
-            //    First, remove 'active' from all sort icons
-            document.querySelectorAll('.sortable .material-symbols-outlined').forEach(icon => {
-                icon.classList.remove('active');
-            });
-
-            //    Then, add 'active' to the specific icon for ascending frequency
-            const newActiveIcon = document.querySelector('.sortable[data-sort="frequency"] .material-symbols-outlined[data-direction="asc"]');
-            if (newActiveIcon) {
-                newActiveIcon.classList.add('active');
-            }
-
-            // --- END: NEW CODE TO RESET SORT ORDER ---
-
-            // Now, process the data. It will use the new sort settings automatically.
             processCompanyData(data);
 
         } catch (err) {
@@ -455,24 +400,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Solved/Flagged icon clicks
-    // questionTableBody.addEventListener('click', (e) => {
-    //     const target = e.target;
-    //     const id = parseInt(target.dataset.id, 10);
-    //     if (!id) return;
-
-    //     if (target.classList.contains('flag-icon')) {
-    //         flaggedQuestions.has(id) ? flaggedQuestions.delete(id) : flaggedQuestions.add(id);
-    //         localStorage.setItem('flaggedQuestions', JSON.stringify([...flaggedQuestions]));
-    //         if (flaggedFilter.checked) applyFiltersAndSort(); // Re-filter if view is active
-    //         else target.classList.toggle('flagged');
-    //     } else if (target.classList.contains('solved-icon')) {
-    //         solvedQuestions.has(id) ? solvedQuestions.delete(id) : solvedQuestions.add(id);
-    //         localStorage.setItem('solvedQuestions', JSON.stringify([...solvedQuestions]));
-    //         if (solvedFilter.checked) applyFiltersAndSort(); // Re-filter if view is active
-    //         else target.classList.toggle('solved');
-    //     }
-    // });
-
     questionTableBody.addEventListener('click', (e) => {
         const target = e.target;
         const questionId = parseInt(target.dataset.id, 10);
@@ -485,9 +412,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 flaggedQuestionsMap.set(questionId, "");
             }
             localStorage.setItem('flaggedQuestionsMap', JSON.stringify(Object.fromEntries(flaggedQuestionsMap)));
-            displayCurrentPage();
+            displayCurrentPage(); 
+            if (flaggedHeaderCheckbox.checked) applyFiltersAndSort();
         } else if (target.classList.contains('solved-icon')) {
-            // ***FIXED***: Use the correct variable 'questionId' instead of 'id'
             if (solvedQuestions.has(questionId)) {
                 solvedQuestions.delete(questionId);
             } else {
@@ -495,81 +422,77 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             localStorage.setItem('solvedQuestions', JSON.stringify([...solvedQuestions]));
             
-            if (solvedFilter.checked) {
+            if (solvedHeaderCheckbox.checked) {
                 applyFiltersAndSort();
             } else {
-                target.classList.toggle('solved');
+                displayCurrentPage(); 
             }
         } else if (target.classList.contains('edit-comment-icon')) {
             openCommentModal(questionId);
         }
-});
-    // // Column Header Sorting
-    // // ***FIXED***: Removed the duplicate event listener block.
-    // document.querySelectorAll('.sortable .sort-icon').forEach(icon => {
-    //     icon.addEventListener('click', (e) => {
-    //         const th = e.target.closest('.sortable');
-    //         const sortType = th.dataset.sort;
-    //         const direction = e.target.dataset.direction;
-
-    //         document.querySelectorAll('.sort-icon').forEach(i => i.classList.remove('active'));
-    //         e.target.classList.add('active');
-
-    //         currentSortColumn = sortType;
-    //         currentSortDirection = direction;
-    //         applyFiltersAndSort();
-    //     });
-    // });
+    });
 
     // --- COLUMN HEADER SORTING ---
-    // This selector specifically targets the arrow icons inside any header with the "sortable" class.
-    document.querySelectorAll('.sortable .material-symbols-outlined').forEach(icon => {
-        icon.addEventListener('click', (e) => {
-            const th = e.target.closest('.sortable');
-            if (!th) return; // Exit if the parent header isn't found
+    document.querySelectorAll('.sortable').forEach(th => {
+        th.addEventListener('click', (e) => {
+            if (e.target.closest('input')) return;
 
             const sortType = th.dataset.sort;
-            const direction = e.target.dataset.direction;
-
-            // --- Visual Feedback ---
-            // First, remove the 'active' class from all sorting icons
-            document.querySelectorAll('.sortable .material-symbols-outlined').forEach(i => {
-                i.classList.remove('active');
-            });
-            // Then, add the 'active' class only to the icon that was clicked
-            e.target.classList.add('active');
-
-            // --- Update State & Re-render Table ---
+            
+            let newDirection;
+            if (currentSortColumn === sortType) {
+                newDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                newDirection = 'desc'; 
+            }
+            
             currentSortColumn = sortType;
-            currentSortDirection = direction;
-            applyFiltersAndSort(); // This triggers the table to re-sort and re-render
+            currentSortDirection = newDirection;
+            updateSortIcons(currentSortColumn, currentSortDirection);
+            
+            applyFiltersAndSort();
         });
     });
 
     // Header Checkbox Filters
-    solvedHeaderCheckbox.addEventListener('change', () => {
-        solvedFilter.checked = solvedHeaderCheckbox.checked;
-        applyFiltersAndSort();
-    });
-    flaggedHeaderCheckbox.addEventListener('change', () => {
-        flaggedFilter.checked = flaggedHeaderCheckbox.checked;
-        applyFiltersAndSort();
+    solvedHeaderCheckbox.addEventListener('change', applyFiltersAndSort);
+    flaggedHeaderCheckbox.addEventListener('change', applyFiltersAndSort);
+
+    // Clear Buttons
+    clearSolvedBtn.addEventListener('click', () => {
+        if (confirm("Are you sure you want to clear all solved questions? This action cannot be undone.")) {
+            solvedQuestions.clear();
+            localStorage.setItem('solvedQuestions', JSON.stringify([]));
+            solvedHeaderCheckbox.checked = false;
+            displayCurrentPage();
+            alert("All solved questions have been cleared.");
+        }
     });
 
-    // ***ADD NEW LISTENERS*** for the modal at the end of your script
+    clearFlaggedBtn.addEventListener('click', () => {
+        if (confirm("Are you sure you want to clear all flagged questions and their notes? This action cannot be undone.")) {
+            flaggedQuestionsMap.clear();
+            localStorage.setItem('flaggedQuestionsMap', JSON.stringify({}));
+            flaggedHeaderCheckbox.checked = false;
+            displayCurrentPage();
+            alert("All flagged questions and notes have been cleared.");
+        }
+    });
 
+    // Comment Modal
     saveCommentBtn.addEventListener('click', () => {
         if (currentEditingQuestionId !== null) {
             const newComment = commentTextarea.value.trim();
             flaggedQuestionsMap.set(currentEditingQuestionId, newComment);
             localStorage.setItem('flaggedQuestionsMap', JSON.stringify(Object.fromEntries(flaggedQuestionsMap)));
             closeCommentModal();
+            displayCurrentPage();
         }
     });
 
     cancelCommentBtn.addEventListener('click', closeCommentModal);
     commentModal.addEventListener('click', (e) => {
-        if (e.target === commentModal) { // Close if clicking on the overlay
+        if (e.target === commentModal) {
             closeCommentModal();
         }
     });
@@ -579,7 +502,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 
-// --- SETTINGS MODAL (Unchanged) ---
+// --- SETTINGS MODAL ---
 const settingsBtn = document.getElementById('settings-btn');
 const settingsModal = document.getElementById('settings-modal');
 const deleteDataBtn = document.getElementById('delete-data-btn');
@@ -595,4 +518,3 @@ deleteDataBtn.addEventListener('click', () => {
         location.reload(); // Reload to clear state
     }
 });
-
