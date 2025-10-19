@@ -88,6 +88,20 @@ def get_companies_sorted(db: Session = Depends(get_db)):
         for c in company_counts
     ]
     
+@app.get("/all_companies/")
+def get_all_companies(db: Session = Depends(get_db)):
+    # Fetch all companies in alphabetical order
+    companies = db.query(Company).order_by(Company.name).all()
+
+    if not companies:
+        raise HTTPException(status_code=404, detail="No companies found")
+
+    # Return JSON response
+    return [
+        {"company_id": c.id, "name": c.name}
+        for c in companies
+    ]
+
 @app.get("/topics/")
 def get_all_topics(db: Session = Depends(get_db)):
     topics = db.query(Topic).all()
