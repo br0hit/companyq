@@ -1,8 +1,11 @@
-// A corrected and refactored version of your script.
+// filters.js - Updated to use common components
 
 document.addEventListener('DOMContentLoaded', async () => {
+    
+    // Initialize common components (sidebar, theme toggle, settings modal)
+    initializeCommonComponents('filters');
+    
     // --- ELEMENTS ---
-    const themeToggle = document.getElementById('theme-toggle');
     const questionTableBody = document.getElementById('question-table-body');
     const companyFilter = document.getElementById('filter-company');
     const timeFilter = document.getElementById('filter-time');
@@ -24,86 +27,58 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // --- STATE ---
     const storedFlags = JSON.parse(localStorage.getItem('flaggedQuestionsMap')) || {};
-    // Convert string keys from localStorage back to numbers before creating the Map
     const flagEntries = Object.entries(storedFlags).map(([key, value]) => [parseInt(key, 10), value]);
     let flaggedQuestionsMap = new Map(flagEntries);
 
-    let currentEditingQuestionId = null; // To track which question's comment is being edited
+    let currentEditingQuestionId = null;
     let solvedQuestions = new Set(JSON.parse(localStorage.getItem('solvedQuestions')) || []);
     let filteredAndSortedQuestions = [];
-    let companyDataMap = {}; // holds questions divided by time period
+    let companyDataMap = {};
     let currentPage = 1;
     let questionsPerPage = parseInt(pageSizeSelector.value, 10);
-    let currentSortColumn = 'frequency'; // Default sort
-    let currentSortDirection = 'desc'; // Default direction
-
-    // --- THEME LOGIC ---
-    const applyTheme = (theme) => {
-        document.body.classList.toggle('dark-mode', theme === 'dark');
-        themeToggle.checked = theme === 'dark';
-    };
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    applyTheme(savedTheme);
-    themeToggle.addEventListener('change', () => {
-        const newTheme = themeToggle.checked ? 'dark' : 'light';
-        localStorage.setItem('theme', newTheme);
-        applyTheme(newTheme);
-    });
+    let currentSortColumn = 'frequency';
+    let currentSortDirection = 'desc';
 
     // --- DATA LOADING & INITIALIZATION ---
 
-    /**
-     * Updates the UI after new company data is fetched or loaded from localStorage.
-     */
     function processCompanyData(companyData) {
         if (!companyData || !companyData.time_periods) {
             showErrorMessage("No question data found for this company.");
             return;
         }
 
-        // STEP 1: Populate Time Period Dropdown dynamically
         const timePeriods = companyData.time_periods;
         const timePeriodKeys = Object.keys(timePeriods);
-        timeFilter.innerHTML = ''; // Clear old options
+        timeFilter.innerHTML = '';
         timePeriodKeys.forEach(label => {
             const option = document.createElement('option');
-            option.value = label; // Use the actual key as the value
-            option.textContent = label.replace(/^\d+\.\s*/, ''); // Strip "1. " prefix
+            option.value = label;
+            option.textContent = label.replace(/^\d+\.\s*/, '');
             timeFilter.appendChild(option);
         });
 
-        // Select "All" by default
         const allKey = timePeriodKeys.find(k => k.toLowerCase().includes('all'));
         timeFilter.value = allKey || timePeriodKeys[0];
 
-        // STEP 2: Build companyDataMap
         companyDataMap = { ...timePeriods };
 
-        // STEP 3: Load default dataset and populate topics
         const defaultQuestions = companyDataMap[timeFilter.value] || [];
         populateTopics(defaultQuestions);
 
-        // STEP 4: Render the table
         applyFiltersAndSort();
     }
 
-    /**
-     * Main initialization function on page load.
-     */
     async function initializeApp() {
-        // Load companies from companies.json file
         let companiesData = [];
         try {
             const response = await fetch('companies.json');
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             companiesData = await response.json();
             
-            // Store both company data and names list in localStorage
             localStorage.setItem('companiesData', JSON.stringify(companiesData));
             localStorage.setItem('companiesList', JSON.stringify(companiesData.map(c => c.name)));
         } catch (err) {
             console.error("Failed to load companies.json:", err);
-            // Fallback to localStorage if file fetch fails
             const storedData = localStorage.getItem('companiesData');
             if (storedData) {
                 companiesData = JSON.parse(storedData);
@@ -113,20 +88,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // Sort companies alphabetically by name
         companiesData.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
         
-        // Populate company dropdown
+        // Populate company dropdown with ALL companies from companies.json
         companyFilter.innerHTML = '';
         companiesData.forEach(company => {
             const option = document.createElement('option');
             option.value = company.name;
             option.textContent = company.name;
-            option.dataset.companyId = company.company_id; // Store company_id as data attribute
+            option.dataset.companyId = company.company_id;
             companyFilter.appendChild(option);
         });
 
-        // Load data for the stored company
         const storedCompany = localStorage.getItem('selectedCompany');
         const companyData = JSON.parse(localStorage.getItem('companyData'));
 
@@ -135,10 +108,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
+        // Set the selected company in the dropdown
         companyFilter.value = storedCompany;
         processCompanyData(companyData);
         
-        // Initial setup for the sort icon display
         updateSortIcons(currentSortColumn, currentSortDirection);
     }
 
@@ -188,7 +161,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         currentEditingQuestionId = questionId;
         modalQuestionTitle.textContent = question.title;
-        commentTextarea.value = flaggedQuestionsMap.get(questionId) || ''; // Get existing comment or empty string
+        commentTextarea.value = flaggedQuestionsMap.get(questionId) || '';
 
         commentModal.classList.remove('hidden');
         commentTextarea.focus();
@@ -213,7 +186,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             const isSolved = solvedQuestions.has(q.question_id);
             const topicsHTML = q.topics.map(t => `<span class="topic-tag">${t}</span>`).join('');
             
-            // Check if there's a comment to determine if the icon should be 'edit_note' or 'note_add'
             const hasComment = flaggedQuestionsMap.get(q.question_id);
             const noteIconName = hasComment ? 'edit_note' : 'note_add';
 
@@ -245,15 +217,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         const selectedTimeKey = timeFilter.value;
         let result = [...(companyDataMap[selectedTimeKey] || [])];
 
-        // Apply other filters
         const selectedTopics = Array.from(topicsDropdown.querySelectorAll('input:checked')).map(cb => cb.value);
         if (selectedTopics.length > 0) result = result.filter(q => selectedTopics.every(topic => q.topics.includes(topic)));
         
-        // Check header checkboxes for filtering
         if (flaggedHeaderCheckbox.checked) result = result.filter(q => flaggedQuestionsMap.has(q.question_id));
         if (solvedHeaderCheckbox.checked) result = result.filter(q => solvedQuestions.has(q.question_id));
 
-        // Apply sorting
         const difficultyMap = { 'EASY': 1, 'MEDIUM': 2, 'HARD': 3 };
         if (currentSortColumn) {
             result.sort((a, b) => {
@@ -290,26 +259,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         displayCurrentPage();
     };
     
-    // Updates the sort icons display (called from sort click and company change)
     const updateSortIcons = (sortType, direction) => {
-        // 1. Reset all icons
         document.querySelectorAll('.sortable .material-symbols-outlined').forEach(icon => {
             icon.classList.remove('active');
-            icon.textContent = 'unfold_more'; // Default caret
+            icon.textContent = 'unfold_more';
             icon.removeAttribute('data-direction');
         });
 
-        // 2. Set the active icon
         const activeHeader = document.querySelector(`.sortable[data-sort="${sortType}"]`);
         const activeIcon = activeHeader ? activeHeader.querySelector('.material-symbols-outlined') : null;
         
         if (activeIcon) {
             activeIcon.classList.add('active');
             activeIcon.textContent = direction === 'asc' ? 'arrow_upward' : 'arrow_downward';
-            activeIcon.setAttribute('data-direction', direction); // Store direction for reference
+            activeIcon.setAttribute('data-direction', direction);
         }
     };
-
 
     // --- PAGINATION ---
     const displayCurrentPage = () => {
@@ -325,7 +290,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (totalPages <= 1) {
             paginationContainer.style.display = 'none';
             return;
-        };
+        }
         
         const createButton = (text, onClick, isDisabled = false, isActive = false) => {
             const button = document.createElement('button');
@@ -354,12 +319,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         applyFiltersAndSort();
     });
     
-    // Switch companies and reload data
     companyFilter.addEventListener('change', async () => {
         const selectedCompany = companyFilter.value;
         if (!selectedCompany) return;
 
-        // Get the company_id from the selected option
         const selectedOption = companyFilter.options[companyFilter.selectedIndex];
         const companyId = selectedOption.dataset.companyId;
 
@@ -371,10 +334,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             const data = await response.json();
 
             localStorage.setItem('selectedCompany', selectedCompany);
-            localStorage.setItem('selectedCompanyId', companyId); // Store company_id for future use
+            localStorage.setItem('selectedCompanyId', companyId);
             localStorage.setItem('companyData', JSON.stringify(data));
 
-            // Reset sort order
             currentSortColumn = 'frequency';
             currentSortDirection = 'desc'; 
             updateSortIcons(currentSortColumn, currentSortDirection);
@@ -387,11 +349,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Custom dropdown listeners
     topicSelectBox.addEventListener('click', () => {
         topicsDropdown.classList.toggle('visible');
         topicSelectBox.classList.toggle('open');
     });
+    
     window.addEventListener('click', (e) => {
         if (!topicSelectBox.contains(e.target) && !topicsDropdown.contains(e.target)) {
             topicsDropdown.classList.remove('visible');
@@ -399,7 +361,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Solved/Flagged icon clicks
     questionTableBody.addEventListener('click', (e) => {
         const target = e.target;
         const questionId = parseInt(target.dataset.id, 10);
@@ -432,7 +393,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // --- COLUMN HEADER SORTING ---
     document.querySelectorAll('.sortable').forEach(th => {
         th.addEventListener('click', (e) => {
             if (e.target.closest('input')) return;
@@ -454,11 +414,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
-    // Header Checkbox Filters
     solvedHeaderCheckbox.addEventListener('change', applyFiltersAndSort);
     flaggedHeaderCheckbox.addEventListener('change', applyFiltersAndSort);
 
-    // Clear Buttons
     clearSolvedBtn.addEventListener('click', () => {
         if (confirm("Are you sure you want to clear all solved questions? This action cannot be undone.")) {
             solvedQuestions.clear();
@@ -479,7 +437,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Comment Modal
     saveCommentBtn.addEventListener('click', () => {
         if (currentEditingQuestionId !== null) {
             const newComment = commentTextarea.value.trim();
@@ -499,22 +456,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // --- RUN ---
     initializeApp();
-});
-
-
-// --- SETTINGS MODAL ---
-const settingsBtn = document.getElementById('settings-btn');
-const settingsModal = document.getElementById('settings-modal');
-const deleteDataBtn = document.getElementById('delete-data-btn');
-const openModal = () => settingsModal.classList.remove('hidden');
-const closeModal = () => settingsModal.classList.add('hidden');
-settingsBtn.addEventListener('click', openModal);
-settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeModal(); });
-deleteDataBtn.addEventListener('click', () => {
-    if (confirm("Are you sure you want to delete all your data? This action cannot be undone.")) {
-        localStorage.clear();
-        alert("All user data has been deleted.");
-        closeModal();
-        location.reload(); // Reload to clear state
-    }
 });

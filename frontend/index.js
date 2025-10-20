@@ -1,8 +1,9 @@
 document.addEventListener('DOMContentLoaded', async () => {
     
+    // Initialize common components (sidebar, theme toggle, settings modal)
+    initializeCommonComponents('home');
+    
     // --- ELEMENTS ---
-    const themeToggle = document.getElementById('theme-toggle');
-    const body = document.body;
     const companyGrid = document.getElementById('company-grid');
     const allCompaniesDropdown = document.getElementById('all-companies-dropdown');
     const searchInput = document.getElementById('search-company');
@@ -29,30 +30,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error("Failed to fetch all companies:", err);
         allCompaniesDropdown.innerHTML = `<p style="color:red;">Could not load companies list.</p>`;
     }
-
-    // Modal elements
-    const settingsBtn = document.getElementById('settings-btn');
-    const settingsModal = document.getElementById('settings-modal');
-    const deleteDataBtn = document.getElementById('delete-data-btn');
-
-    // --- THEME SWITCHER LOGIC ---
-    const applyTheme = (theme) => {
-        if (theme === 'dark') {
-            body.classList.add('dark-mode');
-            themeToggle.checked = true;
-        } else {
-            body.classList.remove('dark-mode');
-            themeToggle.checked = false;
-        }
-    };
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    applyTheme(savedTheme);
-
-    themeToggle.addEventListener('change', () => {
-        const newTheme = themeToggle.checked ? 'dark' : 'light';
-        localStorage.setItem('theme', newTheme);
-        applyTheme(newTheme);
-    });
 
     // --- POPULAR COMPANIES GRID RENDERING ---
     const renderPopularCompanies = (companyList) => {
@@ -138,38 +115,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             company.toLowerCase().includes(searchTerm)
         );
         renderAllCompanies(filteredCompanies);
-    });
-
-    // --- SETTINGS MODAL LOGIC ---
-    const openModal = () => {
-        settingsModal.classList.remove('hidden');
-    };
-
-    const closeModal = () => {
-        settingsModal.classList.add('hidden');
-    };
-
-    settingsBtn.addEventListener('click', openModal);
-
-    settingsModal.addEventListener('click', (e) => {
-        if (e.target === settingsModal) {
-            closeModal();
-        }
-    });
-
-    deleteDataBtn.addEventListener('click', () => {
-        const confirmation = confirm(
-            "Are you sure you want to delete all your data? This action cannot be undone."
-        );
-        
-        if (confirmation) {
-            console.log("User confirmed. Deleting data...");
-            localStorage.clear();
-            alert("All user data has been deleted.");
-            closeModal();
-        } else {
-            console.log("User cancelled the action.");
-        }
     });
 
 });

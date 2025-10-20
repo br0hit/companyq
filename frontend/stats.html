@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CP Tracker - Statistics</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="stats.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <script src="common.js"></script>
+    <script src="stats.js" defer></script>
+</head>
+<body class="dark-mode">
+
+    <div class="page-container">
+        <!-- Sidebar will be inserted here by common.js -->
+        
+        <main class="main-content">
+            <header class="main-header">
+                <h2>Your Progress Statistics</h2>
+                <!-- Header right section will be inserted here by common.js -->
+            </header>
+
+            <!-- Summary Cards Section -->
+            <section class="stats-section summary-section">
+                <div class="stats-grid">
+                    <div class="stat-card total-card">
+                        <div class="stat-icon">
+                            <span class="material-symbols-outlined">checklist</span>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-solved">0</h3>
+                            <p>Total Solved</p>
+                        </div>
+                    </div>
+                    <div class="stat-card flagged-card">
+                        <div class="stat-icon">
+                            <span class="material-symbols-outlined">bookmark</span>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-flagged">0</h3>
+                            <p>Flagged Questions</p>
+                        </div>
+                    </div>
+                    <div class="stat-card companies-card">
+                        <div class="stat-icon">
+                            <span class="material-symbols-outlined">business</span>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="companies-explored">0</h3>
+                            <p>Companies Explored</p>
+                        </div>
+                    </div>
+                    <div class="stat-card notes-card">
+                        <div class="stat-icon">
+                            <span class="material-symbols-outlined">note</span>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-notes">0</h3>
+                            <p>Notes Written</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Difficulty Breakdown Section -->
+            <section class="stats-section difficulty-section">
+                <h3 class="section-title">
+                    <span class="material-symbols-outlined">bar_chart</span>
+                    Difficulty Breakdown
+                </h3>
+                <div class="chart-container">
+                    <div class="difficulty-chart">
+                        <div class="difficulty-bar easy-bar">
+                            <div class="bar-label">
+                                <span class="difficulty-name">Easy</span>
+                                <span class="difficulty-count" id="easy-count">0</span>
+                            </div>
+                            <div class="bar-wrapper">
+                                <div class="bar-fill" id="easy-bar" data-percentage="0"></div>
+                            </div>
+                        </div>
+                        <div class="difficulty-bar medium-bar">
+                            <div class="bar-label">
+                                <span class="difficulty-name">Medium</span>
+                                <span class="difficulty-count" id="medium-count">0</span>
+                            </div>
+                            <div class="bar-wrapper">
+                                <div class="bar-fill" id="medium-bar" data-percentage="0"></div>
+                            </div>
+                        </div>
+                        <div class="difficulty-bar hard-bar">
+                            <div class="bar-label">
+                                <span class="difficulty-name">Hard</span>
+                                <span class="difficulty-count" id="hard-count">0</span>
+                            </div>
+                            <div class="bar-wrapper">
+                                <div class="bar-fill" id="hard-bar" data-percentage="0"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="difficulty-pie" id="difficulty-pie">
+                        <!-- Pie chart will be generated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Activity Section -->
+            <section class="stats-section activity-section">
+                <h3 class="section-title">
+                    <span class="material-symbols-outlined">schedule</span>
+                    Recent Activity
+                </h3>
+                <div class="activity-card">
+                    <div id="activity-content" class="activity-content">
+                        <!-- Activity items will be generated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Top Topics Section -->
+            <section class="stats-section topics-section">
+                <h3 class="section-title">
+                    <span class="material-symbols-outlined">category</span>
+                    Most Solved Topics
+                </h3>
+                <div class="topics-container" id="topics-container">
+                    <!-- Topic tags will be generated here -->
+                </div>
+            </section>
+
+            <!-- Flagged Questions Section -->
+            <section class="stats-section flagged-section">
+                <h3 class="section-title">
+                    <span class="material-symbols-outlined">bookmark</span>
+                    Your Flagged Questions
+                </h3>
+                <div class="flagged-container" id="flagged-container">
+                    <!-- Flagged questions list will be generated here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Settings modal will be inserted here by common.js -->
+
+</body>
+</html>
