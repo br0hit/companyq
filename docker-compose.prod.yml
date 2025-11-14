@@ -1,0 +1,28 @@
+# Production environment overrides
+services:
+  nginx:
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certbot:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+
+  backend:
+    build:
+      context: .
+      target: production
+    environment:
+      - DEBUG=False
+      - LOG_LEVEL=info
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: /bin/sh
+    networks:
+      - backend_network
