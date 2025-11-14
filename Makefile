@@ -7,7 +7,7 @@ dev:
 
 prod:
 	@echo "Starting production..."
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+	docker compose -f docker compose.yml -f docker compose.prod.yml up -d --build
 	@echo "✓ Production running at https://companyq.xyz"
 
 down:
